@@ -6,6 +6,14 @@ The bot allows users to book taxis, check availability, answer FAQs, and automat
 
 ---
 
+### 🤖 Telegram Bot
+
+**Bot Username:** `@Sam_cab_booking_bot`
+
+**Launch Bot:** https://t.me/Sam_cab_booking_bot
+
+---
+
 ## 📌 Features
 
 - 🤖 AI-powered conversation using Groq LLM
