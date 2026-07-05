@@ -1,0 +1,339 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are Sam Taxi Service AI Assistant.\n\nYour job is to help customers with taxi bookings, checking availability, FAQs, and order status.\n\nCRITICAL RULES:\n1. If user says \"hi\", \"hello\", \"hey\", \"start\", or any greeting, reply EXACTLY:\n👋 Welcome to Sam Taxi Service!\nI can help you with:\n🚕 Book a Taxi\n📋 Check Booking Status\n❓ FAQs\n🚖 Taxi Availability\nWhat would you like to do?\n\n2. If user asks for \"FAQs\", \"faq\", \"❓ FAQs\", or questions about the service → CALL the FAQ tool to get all FAQ data from the Google Sheet, then present the questions and answers clearly.\n\n3. If user asks for \"Taxi Availability\", \"available taxis\", \"🚖 Taxi Availability\", or wants to see taxis → CALL the Taxi_Details tool to get all taxi data, then show only AVAILABLE taxis with their quantities.\n\n4. If user wants to \"Book a Taxi\", \"🚕 Book a Taxi\", or place an order → Ask for: Customer Name, Taxi Name, and Quantity. Then CALL the Orders tool to append the booking.\n\n5. If user asks \"Check Booking Status\" or \"📋 Check Booking Status\" → Ask for their name and check the Orders sheet.\n\n6. Always use the connected tools when needed. NEVER make up taxi names, prices, or FAQ answers."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -16,
+        64
+      ],
+      "id": "47bd13e8-cd1a-4a05-b461-020e36e541a1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to fetch all taxi details including names, availability count, and status from the Google Sheet when the user asks about taxi availability, available cars, or wants to see what taxis are available.",
+        "documentId": {
+          "__rl": true,
+          "value": "1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw",
+          "mode": "list",
+          "cachedResultName": "Cab Booking System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2010670837,
+          "mode": "list",
+          "cachedResultName": "Taxi_Names",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw/edit#gid=2010670837"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        128,
+        272
+      ],
+      "id": "cf55d23e-a32b-4656-86c2-cbdce8a45fa3",
+      "name": "Taxi_Details",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cpRfV9UbnUpmMKRv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to fetch all FAQ questions and answers from the Google Sheet when the user asks about FAQs, service questions, or how the taxi service works.",
+        "documentId": {
+          "__rl": true,
+          "value": "1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw",
+          "mode": "list",
+          "cachedResultName": "Cab Booking System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1815340234,
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw/edit#gid=1815340234"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        272
+      ],
+      "id": "e45e46cc-ccac-495b-8c46-206b973444b2",
+      "name": "FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cpRfV9UbnUpmMKRv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to append a new booking/order to the Orders sheet. Required fields: Customer Name, Taxi Name, Quantity Ordered. The AI will automatically fill Order Date and Status.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw",
+          "mode": "list",
+          "cachedResultName": "Cab Booking System",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1537282752,
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1VgafiPl032uDFfWNg4_45njmwfRhkcTq1QKhKi6Demw/edit#gid=1537282752"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customer Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', ``, 'string') }}",
+            "Taxi Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Taxi_Name', ``, 'string') }}",
+            "Quantity Ordered": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Quantity_Ordered', ``, 'string') }}",
+            "Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Status', ``, 'string') }}",
+            "Order Date": "={{ $now.toFormat(\"yyyy-MM-dd hh:mm:ss a\") }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Customer Name",
+              "displayName": "Customer Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Taxi Name",
+              "displayName": "Taxi Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Quantity Ordered",
+              "displayName": "Quantity Ordered",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order Date",
+              "displayName": "Order Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        256
+      ],
+      "id": "8d6617f7-8c54-440e-918d-fbdc2d3616e7",
+      "name": "Orders",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cpRfV9UbnUpmMKRv",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        80
+      ],
+      "id": "96a58b3f-8823-4738-ad31-c59618565822",
+      "name": "Telegram Trigger",
+      "webhookId": "0ff47058-3f86-48e2-9fdc-8674b48da41d",
+      "credentials": {
+        "telegramApi": {
+          "id": "872QAEx9ztmSMv3C",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        336,
+        64
+      ],
+      "id": "90b7ad9e-5cb5-4aba-ba4b-ce95ce0d5927",
+      "name": "Send a text message",
+      "webhookId": "0e6b3d86-ab10-4ebc-9135-7a801a786f32",
+      "credentials": {
+        "telegramApi": {
+          "id": "872QAEx9ztmSMv3C",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        272
+      ],
+      "id": "5632d292-613f-4dc5-a5fc-a1f6435dde63",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "Ex1R1MdQBE08JKcc",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Taxi_Details": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orders": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "90db9996-13fe-4e87-b114-cde730e2d780",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "269cd7e0a8dbca764cfb87e8e95ec3458b6d89b39b938a59e0555b2e482842fe"
+  },
+  "nodeGroups": [],
+  "id": "RXN64hd3pnqrdlVl",
+  "tags": []
+}
